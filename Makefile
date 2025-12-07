@@ -1,7 +1,13 @@
 all:
 	mkdir -p build
-	ocamlfind ocamlc -package str -linkpkg utils.ml task.ml main.ml -o build/task-manager
+	ocamlfind ocamlc -package str -c utils.ml -o build/utils.cmo
+	ocamlfind ocamlc -package str -I build -c task.ml -o build/task.cmo
+	ocamlfind ocamlc -package str -I build -c main.ml -o build/main.cmo
+	ocamlfind ocamlc -package str -I build -linkpkg build/utils.cmo build/task.cmo build/main.cmo -o build/task-manager
 
 run:
 	./build/task-manager $(args)
+
+clean:
+	rm -rf build/*
 
