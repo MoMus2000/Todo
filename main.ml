@@ -4,7 +4,8 @@ open Utils
 let default_config: Utils.config = {
   filename = "";
   version  = "v0.0.0";
-  filetype = "python"
+  filetype = "python";
+  recursive = false;
 }
 
 let print_usage() = 
@@ -15,6 +16,7 @@ Options:
   -v, --version     Show program version
   -f, --file-name   File-name to check
   -t, --file-type   File-type to check (py, c, go)
+  -r, --recursive   Check the entire child file tree
   " in
   print_endline usage_string
 
@@ -46,14 +48,21 @@ let rec parse_args (config: config) (args: string list) =
   match args with
   | [] ->
       begin match config with 
-      | {filename = "" ; _ } -> 
-          print_endline "Not A Valid FileName / Path"
-      | {filename; _ } -> 
+      | {filename; recursive; } -> 
+          if recursive then
+            let files = Task.walk (Sys.getcwd ()) in
+            let func filename =
+              let result = read_file filename in
+              Task.process_file_for_todos config result
+            in
+            List.iter func files
+          else
           let result = read_file filename in
           Task.process_file_for_todos config result
       end
+  | "-r":: rest | "--recursive"::rest ->
+      parse_args {config with recursive=true} rest;
   | "-f":: file_name:: rest | "--filename"::file_name::rest ->
-      Printf.printf "Got FileName %s\n" file_name;
       parse_args {config with filename=file_name} rest;
   | "-t":: extension :: rest | "--filetype":: extension ::rest ->
       Printf.printf "Got Extension %s\n" extension;

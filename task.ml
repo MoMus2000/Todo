@@ -1,6 +1,24 @@
 open Utils
 open Str
 
+let rec walk dir : string list =
+  let entries = Array.to_list (Sys.readdir dir) in
+  let rec loop acc entries =
+    match entries with
+    | [] -> acc
+    | name :: rest ->
+        let path = Filename.concat dir name in
+        let acc =
+          if Sys.is_directory path then
+            if name <> "." && name <> ".." then
+              walk path @ acc  (* recurse and append *)
+            else acc
+          else
+            path :: acc       (* add file to acc *)
+        in
+        loop acc rest
+  in
+  loop [] entries
 
 let rec process_line (regex) (acc : string list) (lines: string list) : string list=
   begin match lines with
@@ -14,7 +32,6 @@ let rec process_line (regex) (acc : string list) (lines: string list) : string l
   end
 
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
-  Printf.printf "Config: %s %s\n" config.filename config.filetype;
   let regex = 
     match config.filetype with
     | "py" ->
