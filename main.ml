@@ -52,7 +52,7 @@ let rec parse_args (config: config) (args: string list) =
             let files = Task.walk (recursive_path) in
             let func filename =
               let result = read_file filename in
-              Task.process_file_for_todos config result
+              Task.process_file_for_todos {config with filename=filename} result
             in
             List.iter func files
           else if recursive then

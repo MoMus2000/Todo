@@ -32,12 +32,14 @@ let rec process_line (regex) (acc : string list) (lines: string list) : string l
   end
 
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
-  let regex = Str.regexp_case_fold "\\(#\\|//\\) *TODO *:* *" in
+  let regex = Str.regexp_case_fold
+  "[ \t]*[^ \t\\w]*\\(/\\*\\*\\*\\|/\\*\\*\\|\\*/\\*\\*\\|\\*\\|//\\|#\\|'\\|--\\|%\\|;\\|\\\"\\\"\\\"\\|'''\\) *TODO[\\-()]? *:* *"
+  in
   let filtered = process_line regex [] lines in
     let rec print lines = 
       match lines with
       | head :: tail ->
-          Printf.printf "%s\n" head;
+          Printf.printf "[Fname: %s] %s\n" config.filename head;
           print tail
       | [] -> ()
   in print filtered
