@@ -13,10 +13,14 @@ let print_usage() =
 Usage: TODO Checker [options] <arguments>
 Options:
   -h, --help        Show the help message and exit
-  -v, --verbose     Show the git blame
+  -v, --verbose     Show git blame info
+                    (Blame is only included when --verbose is enabled)
   -f, --file-name   File-name to check
   -r, --recursive   Check the entire child file tree
-  " in
+
+Output:
+[Line][File][TODO] | [Blame][Line][File][TODO]
+" in
   print_endline usage_string
 
 let print_args() =
@@ -49,7 +53,6 @@ let rec parse_args (config: config) (args: string list) =
       begin match config with 
       | {filename; recursive; recursive_path;} -> 
           if (String.equal filename "") && recursive then begin
-            Task.print_table(config);
             let files = Task.walk (recursive_path) in
             let func filename =
               let result = read_file filename in
@@ -58,7 +61,6 @@ let rec parse_args (config: config) (args: string list) =
             List.iter func files
           end
           else if filename <> "" && not recursive then begin
-            Task.print_table(config);
             let result = read_file filename in
             Task.process_file_for_todos config result
           end

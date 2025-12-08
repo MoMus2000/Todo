@@ -61,16 +61,6 @@ let parse_git_blame cmd =
   | _ -> ()
 
 
-let print_table config =
-  if config.verbose then begin
-    Printf.printf "%-19s %4s  %-20s %s\n" "Blame" "Line" "File" "TODO";
-    Printf.printf "%-8s %-10s %4s %-20s %s\n" "--------" "----------" "----" "--------------------" "-------------------------------";
-  end
-  else begin
-    Printf.printf "Line  File                         TODO\n";
-    Printf.printf "----  --------------------         -------------------------------\n"
-  end
-
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
   let regex = Str.regexp_case_fold
   "[ \t]*[^ \t\\w]*\\(/\\*\\*\\*\\|/\\*\\*\\|\\*/\\*\\*\\|\\*\\|//\\|#\\|'\\|--\\|%\\|;\\|\\\"\\\"\\\"\\|'''\\) *TODO[\\-()]? *:* *"
