@@ -48,7 +48,7 @@ let rec parse_args (config: config) (args: string list) =
   | [] ->
       begin match config with 
       | {filename; recursive; recursive_path;} -> 
-          if recursive && Sys.file_exists recursive_path then begin
+          if (String.equal filename "") && recursive then begin
             Task.print_table(config);
             let files = Task.walk (recursive_path) in
             let func filename =
@@ -57,14 +57,7 @@ let rec parse_args (config: config) (args: string list) =
             in
             List.iter func files
           end
-          else if recursive then
-            let files = Task.walk (Sys.getcwd ()) in
-            let func filename =
-              let result = read_file filename in
-              Task.process_file_for_todos config result
-            in
-            List.iter func files
-          else if filename <> "" then begin
+          else if filename <> "" && not recursive then begin
             Task.print_table(config);
             let result = read_file filename in
             Task.process_file_for_todos config result

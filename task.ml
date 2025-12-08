@@ -77,7 +77,13 @@ let process_file_for_todos (config: Utils.config) (lines: string list) =
           if config.verbose then
             parse_git_blame (Printf.sprintf "git blame -L %d,%d %s" 
               lineno lineno config.filename);
-          Printf.printf "%4d. %-30s %s\n" lineno config.filename head;
+          let trimmed_filename = 
+            match List.rev (String.split_on_char '/' config.filename) with
+            | last :: second_last :: _ -> second_last ^ "/" ^ last
+            | last :: _ -> last
+            | [] -> exit 1
+          in
+          Printf.printf "%4d. %-30s %s\n" lineno trimmed_filename head;
           print tail
       | [] -> ()
   in print filtered
