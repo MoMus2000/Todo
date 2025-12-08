@@ -76,6 +76,12 @@ Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
 
 Download a pre-compiled bin for Mac or Linux from [here](https://github.com/MoMus2000/Todo/releases)
 
+```sh
+wget link_to_binary
+sudo mv todo_linux_x86_64 /usr/local/bin/todo
+sudo chmod +x todo
+```
+
 ### Note: Opam / Dune / Ocamlc Needed For Manual Build
 
 ```sh
