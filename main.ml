@@ -64,9 +64,15 @@ let rec parse_args (config: config) (args: string list) =
               Task.process_file_for_todos config result
             in
             List.iter func files
-          else
-          let result = read_file filename in
-          Task.process_file_for_todos config result
+          else if filename <> "" then begin
+            Task.print_table(config);
+            let result = read_file filename in
+            Task.process_file_for_todos config result
+          end
+          else begin
+            print_usage();
+            exit(1)
+          end
       end
   | "-r"::rest | "--recursive"::rest->
       parse_args {
@@ -92,8 +98,12 @@ let rec parse_args (config: config) (args: string list) =
 
 let entry_point (args : string array) =
   match Array.to_list args with
+    | _ :: [] -> 
+        print_usage();
+        exit(1)
     | _ :: tail -> parse_args default_config tail
-    | [] -> parse_args default_config []
+    | [] ->
+        exit(1)
 
 let () =
   entry_point Sys.argv
