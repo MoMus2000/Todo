@@ -21,7 +21,19 @@ let rec process_line (regex) (acc) (counter: int) (lines: string list) =
   begin match lines with
   | head :: tail -> 
       if Str.string_match regex head 0 then
-          process_line regex ((head, counter)::acc) (counter+1) tail
+        let captured = Str.matched_group 2 head in
+        let issue_regex = Str.regexp_case_fold "@ISSUE(#[0-9]+)" in
+        let pos = 
+          (try
+            ignore(Str.search_forward issue_regex head 0);
+            true
+          with Not_found -> false
+          ) in
+          if pos then begin
+            process_line regex ((captured, counter, true)::acc) (counter+1) tail
+          end
+          else
+          process_line regex ((captured, counter, false)::acc) (counter+1) tail
       else
         process_line regex acc (counter+1) tail;
   | [] -> List.rev acc
@@ -57,19 +69,14 @@ let parse_git_blame cmd =
   | _ -> ()
 
 
-let parse_issue message =
-  match String.split_on_char '@' message with
-  | "ISSUE"::rest -> Printf.printf "HIT: %s" (List.hd rest);
-  | _ -> ()
-
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
   let regex = Str.regexp_case_fold
-  "[ \t]*[^ \t\\w]*\\(/\\*\\*\\*\\|/\\*\\*\\|\\*/\\*\\*\\|\\*\\|//\\|#\\|'\\|--\\|%\\|;\\|\\\"\\\"\\\"\\|'''\\) *TODO[\\-()]? *:* *"
+  "^\\(.*\\)\\(TODO* *: *.*\\)"
   in
   let filtered = process_line regex [] 1 lines in
     let rec print lines = 
       match lines with
-      | (head, lineno) :: tail ->
+      | (head, lineno, is_issue) :: tail ->
           if config.verbose then
             parse_git_blame (Printf.sprintf "git blame -L %d,%d %s 2>&1" 
               lineno lineno config.filename);
@@ -80,7 +87,6 @@ let process_file_for_todos (config: Utils.config) (lines: string list) =
             | [] -> exit 1
           in
           Printf.printf "%4d. %-30s %s\n" lineno trimmed_filename head;
-          parse_issue head;
           print tail
       | [] -> ()
   in print filtered

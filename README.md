@@ -65,13 +65,14 @@ Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
 ```sh
 projects/ocaml [main] $ todo -f /Users/mmuhammad/Desktop/projects/ocaml/samples/sample.c
    4. samples/sample.c                 // TODO: Make it work.
+
 projects/ocaml [main] $ todo -f /Users/mmuhammad/Desktop/projects/ocaml/samples/sample.c -v
-
 Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
-
 ```
 
 ## Installation
+
+### Note: Opam / Dune / Ocamlc Needed For Manual Build
 
 ```sh
 sudo make install
