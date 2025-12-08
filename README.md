@@ -20,15 +20,17 @@ projects/ocaml [main] $ todo
 Usage: TODO Checker [options] <arguments>
 Options:
   -h, --help        Show the help message and exit
-  -v, --verbose     Show the git blame
+  -v, --verbose     Show git blame info
+                    (Blame is only included when --verbose is enabled)
   -f, --file-name   File-name to check
   -r, --recursive   Check the entire child file tree
+
+Output:
+[Line][File][TODO] | [Blame][Line][File][TODO]
 ```
 
 ```sh
 projects/ocaml [main] $ todo -r
-Line  File                         TODO
-----  --------------------         -------------------------------
    1. samples/sample_file.py         # TODO: basic todo
    2. samples/sample_file.py         ## TODO   with spaces
    3. samples/sample_file.py         ### TODO:: multiple colons
@@ -46,8 +48,6 @@ Line  File                         TODO
 
 ```sh
 projects/ocaml [main] $ todo -r -v
-Blame               Line  File                 TODO
--------- ---------- ---- -------------------- -------------------------------
 Mustafa 2025-12-07   1. samples/sample_file.py         # TODO: basic todo
 Mustafa 2025-12-07   2. samples/sample_file.py         ## TODO   with spaces
 Mustafa 2025-12-07   3. samples/sample_file.py         ### TODO:: multiple colons
@@ -64,13 +64,9 @@ Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
 
 ```sh
 projects/ocaml [main] $ todo -f /Users/mmuhammad/Desktop/projects/ocaml/samples/sample.c
-Line  File                         TODO
-----  --------------------         -------------------------------
    4. samples/sample.c                 // TODO: Make it work.
 projects/ocaml [main] $ todo -f /Users/mmuhammad/Desktop/projects/ocaml/samples/sample.c -v
 
-Blame               Line  File                 TODO
--------- ---------- ---- -------------------- -------------------------------
 Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
 
 ```

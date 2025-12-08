@@ -1,7 +1,3 @@
-open Unix
-open Utils
-open Str
-
 let rec walk dir : string list =
   let entries = Array.to_list (Sys.readdir dir) in
   let rec loop acc entries =
@@ -52,14 +48,19 @@ let parse_git_blame cmd =
     | _ :: rest :: _ -> 
         let meat = String.trim rest in
           match String.split_on_char ' ' meat with
-          | name1:: _ :: t1:: t2:: rest ->
+          | name1:: _ :: t1:: _ :: _ ->
               Printf.printf "%-7s %-10s" name1 t1;
-          | unknown :: _ -> ()
+          | _ :: _ -> ()
           | [] -> ()
     )
   | Unix.WEXITED 1 -> ()
   | _ -> ()
 
+
+let parse_issue message =
+  match String.split_on_char '@' message with
+  | "ISSUE"::rest -> Printf.printf "HIT: %s" (List.hd rest);
+  | _ -> ()
 
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
   let regex = Str.regexp_case_fold
@@ -79,6 +80,7 @@ let process_file_for_todos (config: Utils.config) (lines: string list) =
             | [] -> exit 1
           in
           Printf.printf "%4d. %-30s %s\n" lineno trimmed_filename head;
+          parse_issue head;
           print tail
       | [] -> ()
   in print filtered

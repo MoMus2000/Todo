@@ -1,0 +1,5 @@
+(executable
+ (name todo)
+ (libraries unix str)               ; <--- Add this line
+ ; (flags (:standard -warn-error -A))
+)

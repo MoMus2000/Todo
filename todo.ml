@@ -1,6 +1,3 @@
-open Task
-open Utils
-
 let default_config: Utils.config = {
   filename = "";
   verbose  = false;
@@ -23,18 +20,6 @@ Output:
 " in
   print_endline usage_string
 
-let print_args() =
-  Printf.printf "[";
-  let rec print_arr arr = 
-    match arr with
-    | [h] -> Printf.printf "%s" h
-    | h :: t -> 
-        Printf.printf "%s, " h;
-        print_arr t;
-    | [] -> ();
-  in print_arr (Array.to_list Sys.argv);
-  Printf.printf "]\n"
-
 let read_file file_name : string list = 
   let chan = open_in file_name in
     let rec loop acc =
@@ -47,13 +32,13 @@ let read_file file_name : string list =
     in
     loop []
 
-let rec parse_args (config: config) (args: string list) =
+let rec parse_args (config: Utils.config) (args: string list) =
   match args with
   | [] ->
       begin match config with 
-      | {filename; recursive; recursive_path;} -> 
+      | {filename; recursive; _ } -> 
           if (String.equal filename "") && recursive then begin
-            let files = Task.walk (recursive_path) in
+            let files = Task.walk (".") in
             let func filename =
               let result = read_file filename in
               Task.process_file_for_todos {config with filename=filename} result

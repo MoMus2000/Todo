@@ -1,22 +1,18 @@
 PREFIX ?= /usr/local
 
 all:
-	mkdir -p build
-	ocamlfind ocamlc -package str,unix -c utils.ml -o build/utils.cmo
-	ocamlfind ocamlc -package str,unix -I build -c task.ml -o build/task.cmo
-	ocamlfind ocamlc -package str,unix -I build -c main.ml -o build/main.cmo
-	ocamlfind ocamlc -package str,unix -I build -linkpkg build/utils.cmo build/task.cmo build/main.cmo -o build/todo
+	dune build
 
 run:
-	./build/todo $(args)
+	./_build/default/todo.exe $(args)
 
 clean:
-	rm -rf build
-	mkdir -p build
+	sudo rm -rf _build
 
-install: all
+install:
+	dune build --profile release
 	mkdir -p $(PREFIX)/bin
-	cp ./build/todo $(PREFIX)/bin/todo
+	cp ./_build/default/todo.exe $(PREFIX)/bin/todo
 
 uninstall:
 	rm -f $(PREFIX)/bin/todo
