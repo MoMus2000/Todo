@@ -20,26 +20,25 @@ let rec walk dir : string list =
   in
   loop [] entries
 
-let rec process_line (regex) (acc : string list) (lines: string list) : string list=
+let rec process_line (regex) (acc) (counter: int) (lines: string list) =
   begin match lines with
   | head :: tail -> 
       if Str.string_match regex head 0 then
-        process_line regex (head::acc) tail
+          process_line regex ((head, counter)::acc) (counter+1) tail
       else
-        process_line regex acc tail;
-  | [] ->
-      acc
+        process_line regex acc (counter+1) tail;
+  | [] -> List.rev acc
   end
 
 let process_file_for_todos (config: Utils.config) (lines: string list) = 
   let regex = Str.regexp_case_fold
   "[ \t]*[^ \t\\w]*\\(/\\*\\*\\*\\|/\\*\\*\\|\\*/\\*\\*\\|\\*\\|//\\|#\\|'\\|--\\|%\\|;\\|\\\"\\\"\\\"\\|'''\\) *TODO[\\-()]? *:* *"
   in
-  let filtered = process_line regex [] lines in
+  let filtered = process_line regex [] 1 lines in
     let rec print lines = 
       match lines with
-      | head :: tail ->
-          Printf.printf "[Fname: %s] %s\n" config.filename head;
+      | (head, lineno) :: tail ->
+          Printf.printf "%3d. [Fname: %s] %s\n" lineno config.filename head;
           print tail
       | [] -> ()
   in print filtered
