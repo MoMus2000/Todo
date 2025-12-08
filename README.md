@@ -74,7 +74,7 @@ Mustafa 2025-12-07   4. samples/sample.c                 // TODO: Make it work.
 
 ### Precompiled Binaries
 
-Download a pre-compiled bin for Mac or Linux from [here](https://github.com/MoMus2000/Todo/releases)
+Download a pre-compiled bin for Linux from [here](https://github.com/MoMus2000/Todo/releases)
 
 ```sh
 wget link_to_binary
